@@ -5,7 +5,7 @@ describe GildedRose do
   # "Aged Brie" - quality-increase item
   # "Backstage passes to a TAFKAL80ETC concert" - concert item
   # "Sulfuras, Hand of Ragnaros" - legendary item
-  # "Souvenir" - non-special item
+  # "Beer" - non-special item
   # "Soul Stone" - conjured item
 
   describe "#update_quality" do
@@ -15,15 +15,25 @@ describe GildedRose do
       expect(items[0].name).to eq "foo"
     end
 
+    context "for multiple items" do
+      it "decreases quality of all items (except legendary) by 1" do
+        items = [Item.new("Beer", 11, 50), Item.new("Sulfuras, Hand of Ragnaros", 11, 80), Item.new("Bread", 11, 50)]
+        GildedRose.new(items).update_quality()
+        expect(items[0].quality).to eq 49
+        expect(items[1].quality).to eq 80
+        expect(items[2].quality).to eq 49
+      end
+    end
+
     context "FOR NON-SPECIAL ITEM" do
       context "that has NOT passed its sell by date, and quality is 50 or over" do
         it "decreases quality by 1" do
-          items = [Item.new("Souvenir", 11, 50)]
+          items = [Item.new("Beer", 11, 50)]
           GildedRose.new(items).update_quality()
           expect(items[0].quality).to eq 49
         end
         it "decreases sell_in by 1" do
-          items = [Item.new("Souvenir", 11, 50)]
+          items = [Item.new("Beer", 11, 50)]
           GildedRose.new(items).update_quality()
           expect(items[0].sell_in).to eq 10
         end
@@ -31,12 +41,12 @@ describe GildedRose do
 
       context "that has NOT passed its sell by date, and sell_in is 11 or greater" do
         it "decreases quality by 1" do
-          items = [Item.new("Souvenir", 11, 20)]
+          items = [Item.new("Beer", 11, 20)]
           GildedRose.new(items).update_quality()
           expect(items[0].quality).to eq 19
         end
         it "decreases sell_in by 1" do
-          items = [Item.new("Souvenir", 11, 20)]
+          items = [Item.new("Beer", 11, 20)]
           GildedRose.new(items).update_quality()
           expect(items[0].sell_in).to eq 10
         end
@@ -44,12 +54,12 @@ describe GildedRose do
 
       context "that has NOT passed its sell by date, and sell_in is 10 or less" do
         it "decreases quality by 1" do
-          items = [Item.new("Souvenir", 10, 20)]
+          items = [Item.new("Beer", 10, 20)]
           GildedRose.new(items).update_quality()
           expect(items[0].quality).to eq 19
         end
         it "decreases sell_in by 1" do
-          items = [Item.new("Souvenir", 10, 20)]
+          items = [Item.new("Beer", 10, 20)]
           GildedRose.new(items).update_quality()
           expect(items[0].sell_in).to eq 9
         end
@@ -57,12 +67,12 @@ describe GildedRose do
 
       context "that has NOT passed its sell by date, and sell_in is 5 or less" do
         it "decreases quality by 1" do
-          items = [Item.new("Souvenir", 5, 20)]
+          items = [Item.new("Beer", 5, 20)]
           GildedRose.new(items).update_quality()
           expect(items[0].quality).to eq 19
         end
         it "decreases sell_in by 1" do
-          items = [Item.new("Souvenir", 5, 20)]
+          items = [Item.new("Beer", 5, 20)]
           GildedRose.new(items).update_quality()
           expect(items[0].sell_in).to eq 4
         end
@@ -70,12 +80,12 @@ describe GildedRose do
 
       context "that has passed its sell by date" do
         it "decreases quality by 2" do
-          items = [Item.new("Souvenir", 0, 20)]
+          items = [Item.new("Beer", 0, 20)]
           GildedRose.new(items).update_quality()
           expect(items[0].quality).to eq 18
         end
         it "decreases sell_in by 1" do
-          items = [Item.new("Souvenir", 0, 20)]
+          items = [Item.new("Beer", 0, 20)]
           GildedRose.new(items).update_quality()
           expect(items[0].sell_in).to eq -1
         end
